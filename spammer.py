@@ -71,10 +71,11 @@ def main():
 
     sender = input("Input your email: ")
     password = input("Input your password: ")
+    start = input("Input number start #: ")
     print()
 
     counter = 0
-    for email in emails:
+    for email in emails[start:]:
         recipient = email.strip()
 
         subject = 'Информация для патриотически настроенных'
