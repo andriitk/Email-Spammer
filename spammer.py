@@ -71,7 +71,7 @@ def main():
 
     sender = input("Input your email: ")
     password = input("Input your password: ")
-    start = input("Input number start #: ")
+    start = int(input("Input number start #: "))
     print()
 
     counter = 0
