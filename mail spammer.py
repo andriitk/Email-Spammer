@@ -11,17 +11,15 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 
-def send_email(recipient: str, subject=None, file_name=None, template=None, message=None) -> bool | str:
+def send_email(sender: str, password: str, recipient: str, subject=None, file_name=None, template=None,
+               message=None) -> bool | str:
     counter = 0
-    # sender = 'patriot.gov@yandex.ru'
-    # password = '=xB=m2&gW-7a-5fv'
 
-    sender = 'knazevoleh@gmail.com'
-    password = 'knazoleg&'
+    # sender = 'email'
+    # password = 'pass'
 
     # СОЗДАЕМ ОБЬЕКТ И УКАЗЫВАЕМ СЕРВЕР И ПОРТ
     server = smtplib.SMTP("smtp.gmail.com", 587)
-    # server = smtplib.SMTP("smtp.yandex.ru", 587)
     server.set_debuglevel(False)
     # ЗАПУСКАЕМ ШИФРОВАНИЯ ПО TLS
     server.starttls()
@@ -71,7 +69,10 @@ def main():
     with open('emails.txt') as f:
         emails = f.readlines()
 
-    len(emails)
+    sender = input("Input your email: ")
+    password = input("Input your password: ")
+    print()
+
     counter = 0
     for email in emails:
         recipient = email.strip()
@@ -88,11 +89,13 @@ def main():
         # recipient = input('Recipient EMAIL: ')
         counter += 1
         time.sleep(random.randint(1, 5))
-        if send_email(recipient=recipient, subject=subject, template=template, file_name=file_name, message=message):
+        if send_email(sender=sender, password=password, recipient=recipient, subject=subject,
+                      template=template, file_name=file_name, message=message):
             print(f'#{counter}  Message to \033[31m\033[1m{email}\033[0m sent successfully!')
         else:
-            print(send_email(recipient=recipient, subject=subject, file_name=file_name,
-                             message=message))
+            print(
+                send_email(sender=sender, password=password, recipient=recipient, subject=subject, file_name=file_name,
+                           message=message))
         if counter == 499:
             print('[INFO]   Sending stopped, LIMIT is EXHAUSTED. Please try again in a couple of hours.')
             break
