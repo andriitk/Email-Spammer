@@ -12,7 +12,7 @@ from email.mime.multipart import MIMEMultipart
 
 
 def send_email(sender: str, password: str, recipient: str, subject=None, file_name=None, template=None,
-               message=None) -> bool | str:
+               message=None):
     counter = 0
 
     # sender = 'email'
