@@ -92,13 +92,14 @@ def main():
         time.sleep(random.randint(1, 5))
         if send_email(sender=sender, password=password, recipient=recipient, subject=subject,
                       template=template, file_name=file_name, message=message):
-            print(f'#{counter}  Message to \033[31m\033[1m{email}\033[0m sent successfully!')
+            print(f'#\033[33m\033[1m{start}\033[0m  Message to \033[31m\033[1m{email}\033[0m sent successfully!')
+            start +=1
         else:
             print(
                 send_email(sender=sender, password=password, recipient=recipient, subject=subject, file_name=file_name,
                            message=message))
         if counter == 499:
-            print('[INFO]   Sending stopped, LIMIT is EXHAUSTED. Please try again in a couple of hours.')
+            print(f'[INFO]   Sending stopped, LIMIT is EXHAUSTED. Please try again in a couple of hours.\nSent \033[31m\033[1m{counter}\033[0m letters. Good work!')
             break
 
 
