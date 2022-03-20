@@ -11,17 +11,16 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 
-def send_email(sender: str, password: str, recipient: str, subject=None, file_name=None, template=None,
-               message=None):
+def send_email(sender: str, password: str, recipient: str, subject=None, file_name=None, template=None, message=None):
     counter = 0
 
-    # СОЗДАЕМ ОБЬЕКТ И УКАЗЫВАЕМ СЕРВЕР И ПОРТ ДЛЯ GMAIL
-    server = smtplib.SMTP("smtp.gmail.com", 587)
+    # СОЗДАЕМ ОБЬЕКТ И УКАЗЫВАЕМ СЕРВЕР И ПОРТ ДЛЯ GMAIL.COM
+    # server = smtplib.SMTP("smtp.gmail.com", 587)
     # СОЗДАЕМ ОБЬЕКТ И УКАЗЫВАЕМ СЕРВЕР И ПОРТ ДЛЯ MAIL.RU
-    # server = smtplib.SMTP_SSL('smtp.mail.ru', 465)
+    server = smtplib.SMTP_SSL('smtp.mail.ru', 465)
     server.set_debuglevel(False)
-    # ЗАПУСКАЕМ ШИФРОВАНИЯ ПО TLS только для GMAL!
-    server.starttls()
+    # ЗАПУСКАЕМ ШИФРОВАНИЯ ПО TLS только для GMAIL.COM
+    # server.starttls()
 
     try:
         server.login(sender, password)
@@ -68,9 +67,10 @@ def main():
     with open('emails.txt') as f:
         emails = f.readlines()
 
-    sender = input("Input your email: ")
-    password = input("Input your password: ")
-    start = int(input("Input number start #: "))
+    sender = input("\033[32m\033[1m[ACTION]\033[0m Input your email: ")
+    password = input("\033[32m\033[1m[ACTION]\033[0m Input your password: ")
+    start = int(input("\033[32m\033[1m[ACTION]\033[0m Input number email-address start (0 or other number) #: "))
+
     print()
 
     counter = 0
@@ -92,15 +92,17 @@ def main():
         if send_email(sender=sender, password=password, recipient=recipient, subject=subject,
                       template=template, file_name=file_name, message=message):
             print(f'#\033[33m\033[1m{start}\033[0m  Message to \033[31m\033[1m{email}\033[0m sent successfully!')
-            start +=1
+            start += 1
         else:
             print(
-                send_email(sender=sender, password=password, recipient=recipient, subject=subject, file_name=file_name,
-                           message=message))
+                send_email(sender=sender, password=password, recipient=recipient,
+                           subject=subject, file_name=file_name, message=message))
         if counter == 499:
-            print(f'[INFO]   Sending stopped, LIMIT is EXHAUSTED. Please try again in a couple of hours.\nSent \033[31m\033[1m{counter}\033[0m letters. Good work!')
+            print(f'[INFO]   Sending stopped, LIMIT is EXHAUSTED. Please try again in a couple of hours.'
+                  f'\nSent \033[31m\033[1m{counter}\033[0m letters. Good work!')
             break
 
 
 if __name__ == "__main__":
     main()
+
