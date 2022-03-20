@@ -15,13 +15,12 @@ def send_email(sender: str, password: str, recipient: str, subject=None, file_na
                message=None):
     counter = 0
 
-    # sender = 'email'
-    # password = 'pass'
-
-    # СОЗДАЕМ ОБЬЕКТ И УКАЗЫВАЕМ СЕРВЕР И ПОРТ
+    # СОЗДАЕМ ОБЬЕКТ И УКАЗЫВАЕМ СЕРВЕР И ПОРТ ДЛЯ GMAIL
     server = smtplib.SMTP("smtp.gmail.com", 587)
+    # СОЗДАЕМ ОБЬЕКТ И УКАЗЫВАЕМ СЕРВЕР И ПОРТ ДЛЯ MAIL.RU
+    # server = smtplib.SMTP_SSL('smtp.mail.ru', 465)
     server.set_debuglevel(False)
-    # ЗАПУСКАЕМ ШИФРОВАНИЯ ПО TLS
+    # ЗАПУСКАЕМ ШИФРОВАНИЯ ПО TLS только для GMAL!
     server.starttls()
 
     try:
