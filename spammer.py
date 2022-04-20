@@ -17,10 +17,11 @@ def send_email(sender: str, password: str, recipient: str, template=None, subjec
     # server = smtplib.SMTP_SSL('smtp.mail.ru', 465)
     # СОЗДАЕМ ОБЬЕКТ И УКАЗЫВАЕМ СЕРВЕР И ПОРТ ДЛЯ YANDEX.RU
     # server = smtplib.SMTP_SSL('smtp.yandex.ru', 465)
+    # server = smtplib.SMTP_SSL('smtp.rambler.ru', 465)
+    # server = smtplib.SMTP('smtp.yandex.ru', 587)
     # server.set_debuglevel(False)
     # ЗАПУСКАЕМ ШИФРОВАНИЯ ПО TLS ТОЛЬКО ДЛЯ GMAIL.COM!!!
     server.starttls()
-    server.ehlo()
 
     try:
         server.login(sender, password)
@@ -58,26 +59,53 @@ def send_email(sender: str, password: str, recipient: str, template=None, subjec
         return False
 
 
+def send_or_alert_emails(start, counter, sender, password, recipient, subject, template, file_name, message):
+    if send_email(sender=sender, password=password, recipient=recipient, subject=subject,
+                  template=template, file_name=file_name, message=message):
+        print(
+            f'\033[33m\033[1m\033[4m#{start}\033[0m  Message to \033[31m\033[1m{recipient}\033[0m sent successfully!')
+        counter += 1
+        time.sleep(random.randint(1, 3))
+    else:
+        print(f"\033[33m\033[1m\033[4m#{start}\033[0m \033[33m\033[1mNOT SENT, socket.gaierror!\033[0m")
+        # counter_error += 1
+        # if counter_error > 3:
+        #     print(
+        #         f'\n\033[31m\033[1m[ERROR]\033[0m Sending STOPPED! PROBLEM WITH SOCKET. Sent \033[31m\033[1m{counter}\033[0m letters.\n'
+        #         f'\033[31m\033[1m[ERROR]\033[0m Please, try again after a while or change your email-address.\n')
+        #     break
+
+    if counter == 999:
+        print(
+            f'\n\033[32m\033[1m[INFO]\033[0m Sending stopped, LIMIT is EXHAUSTED.\n'
+            f'Please try again in a couple of hours.\n'
+            f'Sent \033[31m\033[1m{counter}\033[0m letters. Good work!\n')
+        exit()
+    return counter
+
+
 def main():
     try:
         with open('emails.txt') as f:
-            emails = f.read()
-        list_emails = emails.split('\n')
+            list_emails = f.read().split('\n')
+            # list_emails = set(list_emails)
+            # list_emails = list(list_emails)
 
     except FileNotFoundError:
         print(f"\n\033[31m\033[1m[ERROR]\033[0m PLease check if file \033[31m\033[4memails.txt\033[0m is exist")
         exit()
 
     try:
-        start_script = int(input("Input your \033[32m\033[1mCHOICE\033[0m:\n"
-                                 "[\033[32m\033[1m1\033[0m]---\033[32m\033[1mINFO-TEMPLATE\033[0m\n"
-                                 "[\033[32m\033[1m2\033[0m]---\033[32m\033[1mFAKE-INFO-MOZ\033[0m\n"
-                                 "Please input your choice \033[32m\033[1m(1 or 2)\033[0m: "))
+        start_script = int(input("Options \033[32m\033[1mCHOICE\033[0m:\n\n"
+                                 "[\033[32m\033[1m1\033[0m]---\033[32m\033[1mINFO-TEMPLATE-1\033[0m      \t\t\t[\033[32m\033[1m4\033[0m]---\033[32m\033[1mINFO-TEMPLATE-4\033[0m\n"
+                                 "[\033[32m\033[1m2\033[0m]---\033[32m\033[1mINFO-TEMPLATE-2\033[0m      \t\t\t[\033[32m\033[1m5\033[0m]---\033[32m\033[1mINFO-TEMPLATE-5\033[0m\n"
+                                 "[\033[32m\033[1m3\033[0m]---\033[32m\033[1mINFO-TEMPLATE-3\033[0m\t\t\t[\033[32m\033[1m6\033[0m]---\033[32m\033[1mINFO-TEMPLATE-6\033[0m\n\n"
+                                 "Please, input your choice \033[32m\033[1m[1 - 6]\033[0m: "))
     except ValueError:
         print(f"\n\033[31m\033[1m[ERROR]\033[0m Check your input, please!")
         exit()
 
-    if 1 <= start_script <= 2:
+    if 1 <= start_script <= 6:
 
         print()
         sender = input('\033[32m\033[1m[ACTION]\033[0m Input your \033[31m\033[1memail\033[0m: ')
@@ -89,77 +117,74 @@ def main():
         except ValueError:
             print(f"\n\033[31m\033[1m[ERROR]\033[0m Check your input, please!")
             exit()
+        print("\033[31m\033[1m-\033[0m" * 100)
         print()
 
         counter = 0
         # counter_error = 0
         for email in list_emails[start:]:
-            recipient = email.replace("\n", "")
-            recipient = email.replace("\t", "")
             recipient = email.strip()
 
-            if start_script == 2:
-                subject = 'Министерство здравоохранения Российской Федерации'
-                message = f'В СООТВЕТСТВИИ  С РАСПОРЯЖЕНИЕМ МИНИСТРА ЗДРАВООХРАНЕНИЯ РОССИЙСКОЙ ФЕДЕРАЦИИ ' \
-                          f'М.А. МУРАШКО № 62Н ОТ 22 МАРТА 2022 Г.\n\nНемедленно государственным учреждениям, ' \
-                          f'которые имеют в распоряжении сайты и другие средства публикации, опубликовать следующее ' \
-                          f'обращение Министра здравоохранения Российской Федерации к гражданам нашей страны. ' \
-                          f'О публикации уведомить ответом на это письмо с ' \
-                          f'ссылкой на страницу публикации до 25.03.2022г.\n'
-                file_name = 'Обращение Министра здравоохранения Российской Федерации.jpg'
+            if start_script == 1:
+                subject = None
+                message = None
+                file_name = None
                 template = None
 
-                if send_email(sender=sender, password=password, recipient=recipient, subject=subject,
-                              template=template, file_name=file_name, message=message):
-                    print(
-                        f'\033[33m\033[1m#{start}\033[0m  Message to \033[31m\033[1m{email}\033[0m sent successfully!')
-                    counter += 1
-                    time.sleep(random.randint(2, 3))
-                    start += 1
-                else:
-                    print("\033[33m\033[1mNOT SENT, socket.gaierror!\033[0m")
-                    # counter_error += 1
-                    # if counter_error > 3:
-                    #     print(
-                    #         f'\n\033[31m\033[1m[ERROR]\033[0m Sending STOPPED! PROBLEM WITH SOCKET. Sent \033[31m\033[1m{counter}\033[0m letters.\n'
-                    #         f'\033[31m\033[1m[ERROR]\033[0m Please, try again after a while or change your email-address.\n')
-                    #     break
+                send_or_alert_emails(start, counter, sender, password, recipient, subject, template, file_name,
+                                     message)
+                start += 1
 
-                if counter == 999:
-                    print(
-                        f'\n\033[32m\033[1m[INFO]\033[0m Sending stopped, LIMIT is EXHAUSTED.\n'
-                        f'Please try again in a couple of hours.\n'
-                        f'Sent \033[31m\033[1m{counter}\033[0m letters. Good work!\n')
-                    break
-
-            if start_script == 1:
-                subject = 'Информация для Патриотически Настроенных'
-                message = f'СРОЧНОЕ ОБРАЩЕНИЕ К ГРАЖДАНАМ РОССИЙСКОЙ ФЕДЕРАЦИИ. ДОКУМЕНТ ОБЯЗАТЕЛЕН ДЛЯ ОЗНАКОМЛЕНИЯ.\n'
+            if start_script == 2:
+                subject = None
+                message = None
                 file_name = None
-                template = 'Document.html'
+                template = None
 
-                if send_email(sender=sender, password=password, recipient=recipient, subject=subject,
-                              template=template, file_name=file_name, message=message):
-                    print(
-                        f'\033[33m\033[1m#{start}\033[0m  Message to \033[31m\033[1m{email}\033[0m sent successfully!')
-                    counter += 1
-                    time.sleep(random.randint(2, 3))
-                    start += 1
-                else:
-                    print("\033[33m\033[1mNOT SENT, socket.gaierror!\033[0m")
-                    # counter_error += 1
-                    # if counter_error > 3:
-                    #     print(
-                    #         f'\n\033[31m\033[1m[ERROR]\033[0m Sending STOPPED! PROBLEM WITH SOCKET. Sent \033[31m\033[1m{counter}\033[0m letters.\n'
-                    #         f'\033[31m\033[1m[ERROR]\033[0m Please, try again after a while or change your email-address.\n')
-                    #     break
+                send_or_alert_emails(start, counter, sender, password, recipient, subject, template, file_name,
+                                     message)
+                start += 1
 
-                if counter == 999:
-                    print(
-                        f'\n\033[32m\033[1m[INFO]\033[0m Sending stopped, LIMIT FOR THE DAY is EXHAUSTED.\n'
-                        f'Please try again the next day.\n'
-                        f'Sent \033[31m\033[1m{counter}\033[0m letters. Good work!\n')
-                    break
+            if start_script == 3:
+                subject = None
+                message = None
+                file_name = None
+                template = None
+
+                send_or_alert_emails(start, counter, sender, password, recipient, subject, template, file_name,
+                                     message)
+                start += 1
+
+            if start_script == 4:
+                subject = None
+                message = None
+                file_name = None
+                template = None
+
+                send_or_alert_emails(start, counter, sender, password, recipient, subject, template, file_name,
+                                     message)
+                start += 1
+
+            if start_script == 5:
+                subject = 'None
+                message = None
+                file_name = None
+                template = None
+
+                send_or_alert_emails(start, counter, sender, password, recipient, subject, template, file_name,
+                                     message)
+                start += 1
+
+            if start_script == 6:
+                subject = None
+                message = None
+                file_name = None
+                template = None
+
+                send_or_alert_emails(start, counter, sender, password, recipient, subject, template, file_name,
+                                     message)
+                start += 1
+
     else:
         print(f"\n\033[31m\033[1m[ERROR]\033[0m Check your input, please!\n")
 
