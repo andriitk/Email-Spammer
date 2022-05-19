@@ -12,16 +12,16 @@ import os
 
 def send_email(sender: str, password: str, recipient: str, template=None, subject=None, file_name=None, message=None):
     # СОЗДАЕМ ОБЬЕКТ И УКАЗЫВАЕМ СЕРВЕР И ПОРТ ДЛЯ GMAIL.COM
-    server = smtplib.SMTP("smtp.gmail.com", 587)
+    # server = smtplib.SMTP("smtp.gmail.com", 587)
     # СОЗДАЕМ ОБЬЕКТ И УКАЗЫВАЕМ СЕРВЕР И ПОРТ ДЛЯ MAIL.RU
     # server = smtplib.SMTP_SSL('smtp.mail.ru', 465)
     # СОЗДАЕМ ОБЬЕКТ И УКАЗЫВАЕМ СЕРВЕР И ПОРТ ДЛЯ YANDEX.RU
-    # server = smtplib.SMTP_SSL('smtp.yandex.ru', 465)
+    server = smtplib.SMTP_SSL('smtp.yandex.ru', 465)
     # server = smtplib.SMTP_SSL('smtp.rambler.ru', 465)
     # server = smtplib.SMTP('smtp.yandex.ru', 587)
     # server.set_debuglevel(False)
     # ЗАПУСКАЕМ ШИФРОВАНИЯ ПО TLS ТОЛЬКО ДЛЯ GMAIL.COM!!!
-    server.starttls()
+    # server.starttls()
 
     try:
         server.login(sender, password)
@@ -88,105 +88,38 @@ def main():
     try:
         with open('emails.txt') as f:
             list_emails = f.read().split('\n')
-            # list_emails = set(list_emails)
-            # list_emails = list(list_emails)
+            list_emails = set(list_emails)
+            list_emails = list(list_emails)
 
     except FileNotFoundError:
         print(f"\n\033[31m\033[1m[ERROR]\033[0m PLease check if file \033[31m\033[4memails.txt\033[0m is exist")
         exit()
 
+    sender = input('\033[32m\033[1m[ACTION]\033[0m Input your \033[31m\033[1memail\033[0m: ')
+    password = input('\033[32m\033[1m[ACTION]\033[0m Input \033[31m\033[1mpassword\033[0m: ')
+
     try:
-        start_script = int(input("Options \033[32m\033[1mCHOICE\033[0m:\n\n"
-                                 "[\033[32m\033[1m1\033[0m]---\033[32m\033[1mINFO-TEMPLATE-1\033[0m      \t\t\t[\033[32m\033[1m4\033[0m]---\033[32m\033[1mINFO-TEMPLATE-4\033[0m\n"
-                                 "[\033[32m\033[1m2\033[0m]---\033[32m\033[1mINFO-TEMPLATE-2\033[0m      \t\t\t[\033[32m\033[1m5\033[0m]---\033[32m\033[1mINFO-TEMPLATE-5\033[0m\n"
-                                 "[\033[32m\033[1m3\033[0m]---\033[32m\033[1mINFO-TEMPLATE-3\033[0m\t\t\t[\033[32m\033[1m6\033[0m]---\033[32m\033[1mINFO-TEMPLATE-6\033[0m\n\n"
-                                 "Please, input your choice \033[32m\033[1m[1 - 6]\033[0m: "))
+        start = int(input("\033[32m\033[1m[ACTION]\033[0m Input \033[31m\033[1mlist-number email-address\033[0m start"
+                          " \033[31m\033[1m(0 or other number)\033[0m #: "))
     except ValueError:
         print(f"\n\033[31m\033[1m[ERROR]\033[0m Check your input, please!")
         exit()
+    print("\033[31m\033[1m-\033[0m" * 100)
+    print()
 
-    if 1 <= start_script <= 6:
+    counter = 0
+    # counter_error = 0
+    for email in list_emails[start:]:
+        recipient = email.strip()
 
-        print()
-        sender = input('\033[32m\033[1m[ACTION]\033[0m Input your \033[31m\033[1memail\033[0m: ')
-        password = input('\033[32m\033[1m[ACTION]\033[0m Input \033[31m\033[1mpassword\033[0m: ')
+        subject = Subject
+        message = None
+        file_name = None
+        template = 'template.html'
 
-        try:
-            start = int(input("\033[32m\033[1m[ACTION]\033[0m Input \033[31m\033[1mnumber email-address\033[0m start"
-                              " \033[31m\033[1m(0 or other number)\033[0m #: "))
-        except ValueError:
-            print(f"\n\033[31m\033[1m[ERROR]\033[0m Check your input, please!")
-            exit()
-        print("\033[31m\033[1m-\033[0m" * 100)
-        print()
-
-        counter = 0
-        # counter_error = 0
-        for email in list_emails[start:]:
-            recipient = email.strip()
-
-            if start_script == 1:
-                subject = None
-                message = None
-                file_name = None
-                template = None
-
-                send_or_alert_emails(start, counter, sender, password, recipient, subject, template, file_name,
-                                     message)
-                start += 1
-
-            if start_script == 2:
-                subject = None
-                message = None
-                file_name = None
-                template = None
-
-                send_or_alert_emails(start, counter, sender, password, recipient, subject, template, file_name,
-                                     message)
-                start += 1
-
-            if start_script == 3:
-                subject = None
-                message = None
-                file_name = None
-                template = None
-
-                send_or_alert_emails(start, counter, sender, password, recipient, subject, template, file_name,
-                                     message)
-                start += 1
-
-            if start_script == 4:
-                subject = None
-                message = None
-                file_name = None
-                template = None
-
-                send_or_alert_emails(start, counter, sender, password, recipient, subject, template, file_name,
-                                     message)
-                start += 1
-
-            if start_script == 5:
-                subject = 'None
-                message = None
-                file_name = None
-                template = None
-
-                send_or_alert_emails(start, counter, sender, password, recipient, subject, template, file_name,
-                                     message)
-                start += 1
-
-            if start_script == 6:
-                subject = None
-                message = None
-                file_name = None
-                template = None
-
-                send_or_alert_emails(start, counter, sender, password, recipient, subject, template, file_name,
-                                     message)
-                start += 1
-
-    else:
-        print(f"\n\033[31m\033[1m[ERROR]\033[0m Check your input, please!\n")
+        send_or_alert_emails(start, counter, sender, password, recipient, subject, template, file_name,
+                             message)
+        start += 1
 
 
 if __name__ == "__main__":
@@ -199,4 +132,3 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         print("\n\033[31m\033[1m[ERROR]\033[0m PROGRAM STOPPED BY USER\n")
-
